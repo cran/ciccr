@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Causal Inference in Case-Control Studies: Vignette</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Causal Inference in Case-Control Studies: Vignette</h1>
+
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>This vignette describes how to use package “ciccr” that is based on the paper entitled “Causal Inference in Case-Control Studies” (<a href="https://arxiv.org/abs/2004.08318">Jun and Lee, 2020</a>).</p>
+</div>
+<div id="tutorials" class="section level1">
+<h1>Tutorials</h1>
+<p>We first call the ciccr package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(ciccr)</a></code></pre></div>
+<p>To illustrate the usefulness of the package, we use the dataset ACS that is included the package. This dataset is a extract from American Community Survey (ACS) 2018, restricted to white males residing in California with at least a bachelor’s degree. The ACS is an ongoing annual survey by the US Census Bureau that provides key information about US population. We use the following variables:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">  y =<span class="st"> </span>ACS<span class="op">$</span>topincome</a>
+<a class="sourceLine" id="cb2-2" title="2">  t =<span class="st"> </span>ACS<span class="op">$</span>baplus</a>
+<a class="sourceLine" id="cb2-3" title="3">  x =<span class="st"> </span>ACS<span class="op">$</span>age</a></code></pre></div>
+<ul>
+<li><p>The binary outcome `Top Income’ (<span class="math inline">\(Y\)</span>) is defined to be one if a respondent’s annual total pre-tax wage and salary income is top-coded. In our sample extract, the top-coded income bracket has median income $565,000 and the next highest income that is not top-coded is $327,000.</p></li>
+<li><p>The binary treatment (<span class="math inline">\(T\)</span>) is defined to be one if a respondent has a master’s degree, a professional degree, or a doctoral degree.</p></li>
+<li><p>The covariate (<span class="math inline">\(X\)</span>) is age in years and is restricted to be between 25 and 70.</p></li>
+</ul>
+<p>The original ACS sample is not a case-control sample but we construct one by the following procedure.</p>
+<ol style="list-style-type: decimal">
+<li>The case sample <span class="math inline">\((Y=1)\)</span> is composed of 921 individuals whose income is top-coded.</li>
+<li>The control sample <span class="math inline">\((Y=0)\)</span> of equal size is randomly drawn without replacement from the pool of individuals whose income is not top-coded.</li>
+</ol>
+<p>We now construct cubic b-spline terms with three inner knots using the age variable.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">  x =<span class="st"> </span>splines<span class="op">::</span><span class="kw">bs</span>(x, <span class="dt">df =</span> <span class="dv">6</span>)</a></code></pre></div>
+<p>Define <span class="math inline">\(\beta(y) = E [\log \text{OR}(X) | Y = y]\)</span> for <span class="math inline">\(y = 0,1\)</span>, where <span class="math inline">\(\text{OR}(x)\)</span> is the odds ratio conditional on <span class="math inline">\(X=x\)</span>: <span class="math display">\[
+\text{OR}(x) = \frac{P(T=1|Y=1,X=x)}{P(T=0|Y=1,X=x)}\frac{P(T=0|Y=0,X=x)}{P(T=1|Y=0,X=x)}.
+\]</span> Using the retrospective sieve logistic regression model, we estimate <span class="math inline">\(\beta(1)\)</span> by</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">  results_case =<span class="st"> </span><span class="kw">avg_retro_logit</span>(y, t, x, <span class="st">&#39;case&#39;</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2">  results_case<span class="op">$</span>est</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;         y </span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt; 0.7286012</span></a>
+<a class="sourceLine" id="cb4-5" title="5">  results_case<span class="op">$</span>se</a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt;         y </span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; 0.1013445</span></a></code></pre></div>
+<p>Here, option <code>&#39;case&#39;</code> refers to conditioning on <span class="math inline">\(Y=1\)</span>.</p>
+<p>Similarly, we estimate <span class="math inline">\(\beta(0)\)</span> by</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">  results_control =<span class="st"> </span><span class="kw">avg_retro_logit</span>(y, t, x, <span class="st">&#39;control&#39;</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2">  results_control<span class="op">$</span>est</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt;         y </span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; 0.5469094</span></a>
+<a class="sourceLine" id="cb5-5" title="5">  results_control<span class="op">$</span>se</a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt;         y </span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 0.1518441</span></a></code></pre></div>
+<p>Here, option <code>&#39;control&#39;</code> refers to conditioning on <span class="math inline">\(Y=1\)</span>.</p>
+<p>We carry out causal inference by</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">results =<span class="st"> </span><span class="kw">cicc</span>(y, t, x, <span class="fl">0.2</span>, <span class="fl">0.95</span>)</a></code></pre></div>
+<p>Here, 0.2 is the specified upper bound for unknown <span class="math inline">\(p = \text{Pr}(Y=1)\)</span>. If it is not specified, the default choice for the upper bound for <span class="math inline">\(p\)</span> is p_upper = 1. Here, 0.95 refers to the level of the confidence interval (0.95 is the default choice).</p>
+<p>The S3 object <code>results</code> contains a grid of estimates <code>est</code>, standard errors <code>se</code>, and one-sided confidence intervals <code>ci</code> ranging from <code>p = 0</code> to <code>p = p_upper</code>. In addition, the grid <code>pseq</code> from 0 to <code>p_upper</code> is saved as part of the S3 object <code>results</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"> <span class="co"># point estimates</span></a>
+<a class="sourceLine" id="cb7-2" title="2"> results<span class="op">$</span>est</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt;  [1] 0.5469094 0.5488219 0.5507345 0.5526470 0.5545596 0.5564721 0.5583847</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt;  [8] 0.5602972 0.5622097 0.5641223 0.5660348 0.5679474 0.5698599 0.5717725</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; [15] 0.5736850 0.5755976 0.5775101 0.5794227 0.5813352 0.5832477</span></a>
+<a class="sourceLine" id="cb7-6" title="6"> <span class="co"># standard errors</span></a>
+<a class="sourceLine" id="cb7-7" title="7"> results<span class="op">$</span>se</a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co">#&gt;  [1] 0.1518441 0.1502495 0.1486627 0.1470838 0.1455132 0.1439511 0.1423978</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt;  [8] 0.1408536 0.1393188 0.1377937 0.1362787 0.1347740 0.1332800 0.1317971</span></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co">#&gt; [15] 0.1303256 0.1288660 0.1274187 0.1259841 0.1245626 0.1231546</span></a>
+<a class="sourceLine" id="cb7-11" title="11"> <span class="co"># confidence intervals </span></a>
+<a class="sourceLine" id="cb7-12" title="12"> results<span class="op">$</span>ci</a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co">#&gt;  [1] 0.7966706 0.7959604 0.7952628 0.7945784 0.7939075 0.7932506 0.7926083</span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co">#&gt;  [8] 0.7919808 0.7913688 0.7907728 0.7901933 0.7896308 0.7890860 0.7885594</span></a>
+<a class="sourceLine" id="cb7-15" title="15"><span class="co">#&gt; [15] 0.7880516 0.7875633 0.7870953 0.7866480 0.7862224 0.7858191</span></a>
+<a class="sourceLine" id="cb7-16" title="16"> <span class="co"># grid points from 0 to p_upper </span></a>
+<a class="sourceLine" id="cb7-17" title="17"> results<span class="op">$</span>pseq</a>
+<a class="sourceLine" id="cb7-18" title="18"><span class="co">#&gt;  [1] 0.00000000 0.01052632 0.02105263 0.03157895 0.04210526 0.05263158</span></a>
+<a class="sourceLine" id="cb7-19" title="19"><span class="co">#&gt;  [7] 0.06315789 0.07368421 0.08421053 0.09473684 0.10526316 0.11578947</span></a>
+<a class="sourceLine" id="cb7-20" title="20"><span class="co">#&gt; [13] 0.12631579 0.13684211 0.14736842 0.15789474 0.16842105 0.17894737</span></a>
+<a class="sourceLine" id="cb7-21" title="21"><span class="co">#&gt; [19] 0.18947368 0.20000000</span></a></code></pre></div>
+<p>To be more compatible with the odds ratio, it is useful to transform them by the exponential function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"> <span class="co"># point estimate</span></a>
+<a class="sourceLine" id="cb8-2" title="2"> <span class="kw">exp</span>(results<span class="op">$</span>est)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;  [1] 1.727904 1.731212 1.734527 1.737847 1.741174 1.744507 1.747847 1.751193</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&gt;  [9] 1.754545 1.757904 1.761269 1.764641 1.768019 1.771404 1.774795 1.778193</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; [17] 1.781597 1.785008 1.788425 1.791848</span></a>
+<a class="sourceLine" id="cb8-6" title="6"> <span class="co"># confidence interval estimate</span></a>
+<a class="sourceLine" id="cb8-7" title="7"> <span class="kw">exp</span>(results<span class="op">$</span>ci)</a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt;  [1] 2.218144 2.216569 2.215023 2.213507 2.212023 2.210571 2.209151 2.207765</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co">#&gt;  [9] 2.206415 2.205100 2.203822 2.202583 2.201383 2.200224 2.199108 2.198034</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co">#&gt; [17] 2.197005 2.196023 2.195089 2.194203</span></a></code></pre></div>
+<p>It is handy to examine the results by plotting a graph.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">  yaxis_limit =<span class="st"> </span><span class="kw">c</span>(<span class="kw">min</span>(<span class="kw">exp</span>(results<span class="op">$</span>est)),(<span class="kw">max</span>(<span class="kw">exp</span>(results<span class="op">$</span>ci))<span class="op">+</span><span class="fl">0.25</span><span class="op">*</span>(<span class="kw">max</span>(<span class="kw">exp</span>(results<span class="op">$</span>ci))<span class="op">-</span><span class="kw">min</span>(<span class="kw">exp</span>(results<span class="op">$</span>est)))))</a>
+<a class="sourceLine" id="cb9-2" title="2">  <span class="kw">plot</span>(results<span class="op">$</span>pseq, <span class="kw">exp</span>(results<span class="op">$</span>est), <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">lty =</span> <span class="st">&quot;solid&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;Pr(Y*=1)&quot;</span>,<span class="dt">ylab =</span> <span class="st">&quot;exp(change in log probability)&quot;</span>, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="kw">max</span>(results<span class="op">$</span>pseq)), <span class="dt">ylim =</span> yaxis_limit)</a>
+<a class="sourceLine" id="cb9-3" title="3">  <span class="kw">lines</span>(results<span class="op">$</span>pseq, <span class="kw">exp</span>(results<span class="op">$</span>ci), <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>To interpret the results, we assume both marginal treatment response (MTR) and marginal treatment selection (MTS). In this setting, MTR means that everyone will not earn less by obtaining a degree higher than bachelor’s degree; MTS indicates that those who selected into higher education have higher potential to earn top incomes. Based on the MTR and MTS assumptions, we can conclude that the treatment effect lies in between 1 and the upper end point of the one-sided confidence interval with high probability. Thus, the estimates in the graph above suggest that the effect of obtaining a degree higher than bachelor’s degree is anywhere between [1, 2.2], which roughly implies that the chance of earning top incomes may increase up to by a factor of around 2, but allowing for possibility of no positive effect at all. In other words, it is unlikely that the probability of earning top incomes will more than double by pursuing higher education beyond BA. See <a href="https://arxiv.org/abs/2004.08318">Jun and Lee, 2020</a> for more detailed explanations regarding how to interpret the estimation results.</p>
+</div>
+<div id="comparison-with-logistic-regression" class="section level1">
+<h1>Comparison with Logistic Regression</h1>
+<p>We can compare these results with estimates obtained from logistic regression.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">logit =<span class="st"> </span>stats<span class="op">::</span><span class="kw">glm</span>(y<span class="op">~</span>t<span class="op">+</span>x, <span class="dt">family=</span>stats<span class="op">::</span><span class="kw">binomial</span>(<span class="st">&quot;logit&quot;</span>))</a>
+<a class="sourceLine" id="cb10-2" title="2">est_logit =<span class="st"> </span>stats<span class="op">::</span><span class="kw">coef</span>(logit)</a>
+<a class="sourceLine" id="cb10-3" title="3">ci_logit =<span class="st"> </span>stats<span class="op">::</span><span class="kw">confint</span>(logit, <span class="dt">level =</span> <span class="fl">0.9</span>)</a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="co">#&gt; Waiting for profiling to be done...</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co"># point estimate</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="kw">exp</span>(est_logit)</a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; (Intercept)           t          x1          x2          x3          x4 </span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt;  0.05461156  2.06117153  4.42179639 12.99601849 19.03962976 26.83565737 </span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt;          x5          x6 </span></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="co">#&gt;  6.42381406 26.14359394</span></a>
+<a class="sourceLine" id="cb10-11" title="11"><span class="co"># confidence interval</span></a>
+<a class="sourceLine" id="cb10-12" title="12"><span class="kw">exp</span>(ci_logit)</a>
+<a class="sourceLine" id="cb10-13" title="13"><span class="co">#&gt;                     5 %       95 %</span></a>
+<a class="sourceLine" id="cb10-14" title="14"><span class="co">#&gt; (Intercept)  0.01960819  0.1304108</span></a>
+<a class="sourceLine" id="cb10-15" title="15"><span class="co">#&gt; t            1.75166056  2.4271287</span></a>
+<a class="sourceLine" id="cb10-16" title="16"><span class="co">#&gt; x1           1.05679997 21.6604223</span></a>
+<a class="sourceLine" id="cb10-17" title="17"><span class="co">#&gt; x2           5.50583091 33.8909622</span></a>
+<a class="sourceLine" id="cb10-18" title="18"><span class="co">#&gt; x3           6.79458010 61.3258710</span></a>
+<a class="sourceLine" id="cb10-19" title="19"><span class="co">#&gt; x4          10.22943808 78.7353953</span></a>
+<a class="sourceLine" id="cb10-20" title="20"><span class="co">#&gt; x5           2.00536450 22.8509008</span></a>
+<a class="sourceLine" id="cb10-21" title="21"><span class="co">#&gt; x6           8.66983039 87.6311482</span></a></code></pre></div>
+<p>Here, the relevant coefficient is 2.06 (<code>t</code>) and its two-sided 90% confidence interval is [1.75, 2.43]. If we assume strong ignorability, the treatment effect is about 2 and its two-sided confidence interval is between [1.75, 2.43]. However, it is unlikely that the higher BA treatment satisfies the strong ignorability condition.</p>
+</div>
+<div id="reference" class="section level1">
+<h1>Reference</h1>
+<p>Sung Jae Jun and Sokbae Lee. Causal Inference in Case-Control Studies. <a href="https://arxiv.org/abs/2004.08318" class="uri">https://arxiv.org/abs/2004.08318</a>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
