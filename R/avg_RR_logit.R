@@ -4,7 +4,7 @@
 #'
 #' @param y n-dimensional vector of binary outcomes
 #' @param t n-dimensional vector of binary treatments
-#' @param x n by p matrix of covariates
+#' @param x n by d matrix of covariates
 #' @param w 'case' if the average is conditional on the case sample; 'control' if it is conditional on the control sample
 #' default w =  'control'
 #' @return An S3 object of type "ciccr". The object has the following elements.
@@ -12,18 +12,17 @@
 #' \item{se}{standard error}
 #'
 #' @examples
-#' # use the ACS dataset included in the package
-#'   y = ciccr::ACS$topincome
-#'   t = ciccr::ACS$baplus
-#'   x = ciccr::ACS$age
+#' # use the ACS_CC dataset included in the package
+#'   y = ciccr::ACS_CC$topincome
+#'   t = ciccr::ACS_CC$baplus
+#'   x = ciccr::ACS_CC$age
 #' # use 'case' to condition on the distribution of covariates given y = 1
-#'   w = 'case'
-#'   results = avg_retro_logit(y, t, x, w)
+#'   results = avg_RR_logit(y, t, x, 'case')
 #'
-#' @references Sung Jae Jun and Sokbae Lee. Causal Inference in Case-Control Studies.
+#' @references Jun, S.J. and Lee, S. (2020). Causal Inference in Case-Control Studies.
 #' \url{https://arxiv.org/abs/2004.08318}.
 #' @export
-avg_retro_logit = function(y, t, x, w = 'control'){
+avg_RR_logit = function(y, t, x, w = 'control'){
 
   # Choice of the conditional distribution of covariates
   if (w=='case'){
@@ -41,7 +40,7 @@ avg_retro_logit = function(y, t, x, w = 'control'){
   }
 
   # Check whether t is either 0 or 1
-  if ( sum( !(y %in% c(0,1)) ) > 0 ){
+  if ( sum( !(t %in% c(0,1)) ) > 0 ){
     stop("Each element of 't' must be either 0 or 1.")
   }
 
@@ -56,7 +55,7 @@ avg_retro_logit = function(y, t, x, w = 'control'){
 
   # Retrospective logistic estimation
 
-  lm_case = stats::glm(t~y+xcase_demeaned+y*xcase_demeaned, family=stats::binomial("logit"))
+  lm_case = stats::glm(t~y+xcase_demeaned+y:xcase_demeaned, family=stats::binomial("logit"))
   est_all = stats::coef(lm_case)
   est = est_all[2]
   se_all = sqrt(diag(stats::vcov(lm_case)))
