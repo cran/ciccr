@@ -13,7 +13,9 @@ avg_RR_logit(y, t, x, w = "control")
 
 \item{x}{n by d matrix of covariates}
 
-\item{w}{'case' if the average is conditional on the case sample; 'control' if it is conditional on the control sample
+\item{w}{'case' if the average is conditional on the case sample;
+'control' if it is conditional on the control sample;
+'all' if it is based on the whole sample;
 default w =  'control'}
 }
 \value{
@@ -34,6 +36,6 @@ Averages the log odds ratio using retrospective logistic regression.
 
 }
 \references{
-Jun, S.J. and Lee, S. (2020). Causal Inference in Case-Control Studies.
+Jun, S.J. and Lee, S. (2023). Causal Inference under Outcome-Based Sampling with Monotonicity Assumptions.
 \url{https://arxiv.org/abs/2004.08318}.
 }

@@ -6,7 +6,7 @@
 #' @param y n-dimensional vector of binary outcomes
 #' @param t n-dimensional vector of binary treatments
 #' @param x n by d matrix of covariates
-#' @param sampling 'cc' for case-control sampling; 'cp' for case-population sampling (default =  'cc')
+#' @param sampling 'cc' for case-control sampling; 'cp' for case-population sampling; 'rs' for random sampling (default =  'cc')
 #' @param cov_prob coverage probability of a uniform confidence band (default = 0.95)
 #'
 #' @return An S3 object of type "ciccr". The object has the following elements:
@@ -22,7 +22,7 @@
 #'   x = ciccr::ACS_CC$age
 #'   results_RR = cicc_RR(y, t, x, sampling = 'cc', cov_prob = 0.95)
 #'
-#' @references Jun, S.J. and Lee, S. (2020). Causal Inference in Case-Control Studies.
+#' @references Jun, S.J. and Lee, S. (2023). Causal Inference under Outcome-Based Sampling with Monotonicity Assumptions.
 #' \url{https://arxiv.org/abs/2004.08318}.
 #' @references Manski, C.F. (1997). Monotone Treatment Response.
 #' Econometrica, 65(6), 1311-1334.
@@ -32,9 +32,9 @@
 #' @export
 cicc_RR = function(y, t, x, sampling = 'cc', cov_prob = 0.95){
 
-  # Check whether sampling is either case-control or case-population
-  if ( sum( !(sampling %in% c('cc','cp')) ) > 0 ){
-    stop("'sampling' must be either 'cc' or 'cp'.")
+  # Check whether sampling is case-control, case-population, or random
+  if ( sum( !(sampling %in% c('cc','cp','rs')) ) > 0 ){
+    stop("'sampling' must be 'cc', 'cp', or 'rs'.")
   }
 
   if (sampling=='cc'){
@@ -57,6 +57,13 @@ cicc_RR = function(y, t, x, sampling = 'cc', cov_prob = 0.95){
   }  else if (sampling=='cp'){
 
     results = avg_RR_logit(y, t, x, 'control')
+    est = rep(results$est,2)
+    se = rep(results$se,2)
+    ci = est + stats::qnorm(cov_prob)*se
+
+  }  else if (sampling=='rs'){
+
+    results = avg_RR_logit(y, t, x, 'all')
     est = rep(results$est,2)
     se = rep(results$se,2)
     ci = est + stats::qnorm(cov_prob)*se

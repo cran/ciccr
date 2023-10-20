@@ -10,8 +10,7 @@ cicc_plot(
   sampling = "cc",
   save_plots = FALSE,
   file_name = Sys.Date(),
-  plots_ctl = 0.3,
-  plots_dir = FALSE
+  plots_ctl = 0.3
 )
 }
 \arguments{
@@ -27,9 +26,6 @@ cicc_plot(
 
 \item{plots_ctl}{value to determine the topleft position of the legend in the figure
 a large value makes the legend far away from the confidence intervals (default = 0.3)}
-
-\item{plots_dir}{a directory where the plots are saved (default = FALSE);
-plots will be saved under "(current working directory)/figures" by default.}
 }
 \value{
 A X-Y plot where the X axis shows the range of p from 0 to p_upper and
@@ -48,6 +44,6 @@ Plots upper bounds on relative and attributable risk
 
 }
 \references{
-Jun, S.J. and Lee, S. (2020). Causal Inference in Case-Control Studies.
+Jun, S.J. and Lee, S. (2020). Causal Inference under Outcome-Based Sampling with Monotonicity Assumptions.
 \url{https://arxiv.org/abs/2004.08318}.
 }

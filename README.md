@@ -5,13 +5,14 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/sokbae/ciccr.svg?branch=master)](https://travis-ci.org/github/sokbae/ciccr)
+[![R-CMD-check](https://github.com/sokbae/ciccr/workflows/R-CMD-check/badge.svg)](https://github.com/sokbae/ciccr/actions)
+[![](https://cranlogs.r-pkg.org/badges/ciccr)](https://CRAN.R-project.org/package=ciccr)
+[![codecov](https://codecov.io/gh/sokbae/ciccr/branch/master/graph/badge.svg?token=WZ348KLQGA)](https://app.codecov.io/gh/sokbae/ciccr)
 <!-- badges: end -->
 
 The goal of ciccr is to implement methods for carrying out causal
-inference in case-control studies ([Jun and
-Lee, 2020](https://arxiv.org/abs/2004.08318)).
+inference in case-control and case-population studies ([Jun and Lee,
+2023](https://arxiv.org/abs/2004.08318)).
 
 ## Installation
 
@@ -23,8 +24,7 @@ install.packages("ciccr")
 ```
 
 Alternatively, you can install the development version from
-[GitHub](https://github.com/)
-with:
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools") # uncomment this line if devtools is not installed yet 
@@ -39,7 +39,7 @@ We first call the ciccr package.
 library(ciccr)
 ```
 
-To illustrate the usefulness of the package, we use the dataset ACS\_CC
+To illustrate the usefulness of the package, we use the dataset ACS_CC
 that is included the package. This dataset is an extract from American
 Community Survey (ACS) 2018, restricted to white males residing in
 California with at least a bachelor’s degree. The ACS is an ongoing
@@ -52,16 +52,16 @@ about US population. We use the following variables:
   x = ACS_CC$age
 ```
 
-  - The binary outcome `y` is defined to be one if a respondent’s annual
-    total pre-tax wage and salary income is top-coded. In the sample
-    extract, the top-coded income bracket has median income $565,000 and
-    the next highest income that is not top-coded is $327,000.
+- The binary outcome `y` is defined to be one if a respondent’s annual
+  total pre-tax wage and salary income is top-coded. In the sample
+  extract, the top-coded income bracket has median income \$565,000 and
+  the next highest income that is not top-coded is \$327,000.
 
-  - The binary treatment `t` is defined to be one if a respondent has a
-    master’s degree, a professional degree, or a doctoral degree.
+- The binary treatment `t` is defined to be one if a respondent has a
+  master’s degree, a professional degree, or a doctoral degree.
 
-  - The covariate `x` is age in years and is restricted to be between 25
-    and 70.
+- The covariate `x` is age in years and is restricted to be between 25
+  and 70.
 
 The original ACS survey is not from case-control sampling but we
 construct a case-control sample by the following procedure:
@@ -139,8 +139,8 @@ The S3 object `results` contains estimates `est`, standard errors `se`,
 and one-sided confidence bands `ci` at `p = 0` and `p = 1`. The point
 estimates and confidence interval estimates of the `cicc_RR` command are
 based on the scale of log relative risk. It is more conventional to look
-at the results in terms of the relative scale. To do so, we plot the
-results in the following way:
+at the results in terms of relative risk. To do so, we plot the results
+in the following way:
 
 ``` r
 cicc_plot(results)
@@ -158,13 +158,13 @@ between 1 and the upper end point of the one-sided confidence interval
 with high probability. Thus, the estimates in the graph above suggest
 that the effect of obtaining a degree higher than bachelor’s degree is
 anywhere between 1 and the upper end points of the uniform confidence
-bands. This roughly implies that the chance of earning top incomes may
+band. This roughly implies that the chance of earning top incomes may
 increase up to by a factor as large as the upper end points of the
 uniform confidence band, but allowing for possibility of no positive
 effect at all. The results are shown over the range of the unknown true
-case probability. See [Jun and
-Lee, 2020](https://arxiv.org/abs/2004.08318) for more detailed
-explanations regarding how to interpret the estimation results.
+case probability. See [Jun and Lee,
+2020](https://arxiv.org/abs/2004.08318) for more detailed explanations
+regarding how to interpret the estimation results.
 
 ## Comparison with Logistic Regression
 
@@ -198,8 +198,9 @@ exp(ci_logit)
 Here, the relevant coefficient is 2.06 (`t`) and its two-sided 90%
 confidence interval is \[1.75, 2.43\]. If we assume strong ignorability,
 the treatment effect is about 2 and its two-sided confidence interval is
-between \[1.75, 2.43\]. However, it is unlikely that the higher BA
-treatment satisfies the strong ignorability condition.
+between \[1.75, 2.43\]. However, it is unlikely that the
+higher-degrees-than-BA treatment satisfies the strong ignorability
+condition.
 
 ## What else the package can do
 
@@ -208,8 +209,10 @@ attributable risk and how to work with case-population samples.
 
 # References
 
-Sung Jae Jun and Sokbae Lee. Causal Inference in Case-Control Studies.
-<https://arxiv.org/abs/2004.08318>.
+Jun, S.J. and Lee, S. (2023). Causal Inference under Outcome-Based
+Sampling with Monotonicity Assumptions.
+<https://arxiv.org/abs/2004.08318>, accepted for publication in Journal
+of Business & Economic Statistics.
 
 Manski, C.F. (1997). Monotone Treatment Response. Econometrica, 65(6),
 1311-1334.
